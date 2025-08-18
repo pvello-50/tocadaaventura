@@ -7,18 +7,19 @@
   <style>
     :root { --maxw: 1200px; }
     * { box-sizing: border-box; }
-    body {
-      margin: 0; font-family: system-ui, Arial, sans-serif; background:#fafafa; color:#222;
-    }
+    body { margin: 0; font-family: system-ui, Arial, sans-serif; background:#fafafa; color:#222; }
     header {
       position: sticky; top:0; background:#fff; border-bottom:1px solid #eee;
       padding: 12px 16px; display:flex; gap:12px; align-items:center; z-index: 2;
     }
-    header a.btn, header button.btn {
+    body { 
+  background: #fff7f0; /* pastel pêssego suave */
+   }
+    header a.btn {
       appearance: none; border: none; padding: 10px 14px; border-radius:10px; cursor:pointer;
       background:#111; color:#fff; font-weight:600; text-decoration:none;
     }
-    header a.btn:hover, header button.btn:hover { opacity:.9; }
+    header a.btn:hover { opacity:.9; }
     .wrap { max-width: var(--maxw); margin: 0 auto; padding: 16px; }
     h1 { font-size: 1.4rem; margin: 0; }
     #status { padding: 12px 0; color:#666; }
@@ -27,13 +28,39 @@
       gap:12px;
     }
     .card {
-      background:#fff; border-radius:12px; overflow:hidden; border:1px solid #eee;
-      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  position: relative;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  overflow: hidden;
+
+  /* Borda em degradê “brilhante” + fundo branco no conteúdo */
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(120deg, #ffd6e7, #d7f7ff, #e1ffd8) border-box;
+  /* Glow suave ao redor */
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.06),
+    0 0 18px rgba(255, 200, 240, .35),
+    0 0 12px rgba(180, 220, 255, .25);
+
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+    .card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.10),
+    0 0 24px rgba(255, 200, 240, .55),
+    0 0 18px rgba(180, 220, 255, .45);
     }
     .thumb {
-      display:block; width:100%; height: 180px; object-fit:cover; background:#f0f0f0;
+  border-radius: 10px;       /* arredonda levemente a própria imagem */
+  display: block;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  cursor: zoom-in;
     }
-    .name { font-size:.85rem; padding:8px 10px; color:#444; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     /* Lightbox */
     .lightbox {
       position: fixed; inset:0; background: rgba(0,0,0,.85); display:none; align-items:center; justify-content:center;
@@ -81,7 +108,6 @@
           return;
         }
 
-        // Render
         const frag = document.createDocumentFragment();
         for (const path of files) {
           const card = document.createElement('figure');
@@ -91,16 +117,11 @@
           img.loading = 'lazy';
           img.decoding = 'async';
           img.src = path;
-          img.alt = path.split('/').pop();
+          img.alt = ''; // acessível mas sem exibir nome
           img.className = 'thumb';
-          img.addEventListener('click', () => openLightbox(path, img.alt));
-
-          const cap = document.createElement('figcaption');
-          cap.className = 'name';
-          cap.textContent = img.alt;
+          img.addEventListener('click', () => openLightbox(path, ''));
 
           card.appendChild(img);
-          card.appendChild(cap);
           frag.appendChild(card);
         }
         grid.appendChild(frag);
@@ -115,9 +136,8 @@
     // Lightbox handlers
     const lb = document.getElementById('lightbox');
     const lbImg = document.getElementById('lightboxImg');
-    function openLightbox(src, alt) {
+    function openLightbox(src) {
       lbImg.src = src;
-      lbImg.alt = alt || '';
       lb.classList.add('open');
     }
     function closeLightbox() {
@@ -132,3 +152,4 @@
   </script>
 </body>
 </html>
+
